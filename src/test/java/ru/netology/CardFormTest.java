@@ -193,24 +193,6 @@ class CardFormTest {
     }
 
     @Test
-    void shouldCardDeliveryStatic() {
-
-        $("input[type='text']").setValue("Москва");
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue("10.02.2021");
-        $("input[name='name']").setValue("Сюзана Зарипова");
-        $("input[name='phone']").setValue("+78954532412");
-        $("[data-test-id=agreement]").click();
-        $(withText("Запланировать")).click();
-        $(byText("Успешно!")).waitUntil(visible, 15000);
-
-        String dataNow = $("input[type='tel']").val();
-
-        $(".notification__content")
-                .shouldHave(text("Встреча успешно запланирована на " + dataNow));
-    }
-
-    @Test
     void shouldCardDeliveryChange() {
 
         $("input[type='text']").setValue("Москва");
@@ -245,6 +227,4 @@ class CardFormTest {
 
         $(byText("Встреча успешно запланирована на " + dataNowNow)).exists();
     }
-
-
 }
