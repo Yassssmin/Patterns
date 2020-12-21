@@ -1,12 +1,9 @@
 package ru.netology;
 
-import com.github.javafaker.Faker;
+import Data.DataGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
-
-import java.time.LocalDate;
-import java.util.Locale;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
@@ -14,13 +11,11 @@ import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 
 class CardFormTest {
-    private DataGenerator dataGenerator;
 
     @BeforeEach
     void setUp() {
         openSite();
 
-        dataGenerator = new DataGenerator();
     }
 
     void openSite() {
@@ -31,38 +26,38 @@ class CardFormTest {
     void shouldCardDeliverySuccess() {
         RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInfo("ru");
 
+        String date = DataGenerator.Date.getFormattedDate(3);
+
         $("input[type='text']").setValue(requestCardInfo.getCity());
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue(requestCardInfo.getFormattedMeetDate());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(date);
         $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
         $(byText("Успешно!")).waitUntil(visible, 15000);
 
-        String dataNow = $("input[type='tel']").val();
-
         $(".notification__content")
-                .shouldHave(text("Встреча успешно запланирована на " + dataNow));
+                .shouldHave(text("Встреча успешно запланирована на " + date));
     }
 
     @Test
     void shouldCardDeliverySuccessWithHyphen() {
         RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInfoWithHyphen("ru");
 
+        String date = DataGenerator.Date.getFormattedDate(3);
+
         $("input[type='text']").setValue(requestCardInfo.getCity());
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue(requestCardInfo.getFormattedMeetDate());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(date);
         $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
         $(byText("Успешно!")).waitUntil(visible, 15000);
 
-        String dataNow = $("input[type='tel']").val();
-
         $(".notification__content")
-                .shouldHave(text("Встреча успешно запланирована на " + dataNow));
+                .shouldHave(text("Встреча успешно запланирована на " + date));
     }
 
     @Test
@@ -70,8 +65,8 @@ class CardFormTest {
         RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInvalidCityInfo("ru");
 
         $("input[type='text']").setValue(requestCardInfo.getCity());
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue(requestCardInfo.getFormattedMeetDate());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(DataGenerator.Date.getFormattedDate(3));
         $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
@@ -84,8 +79,8 @@ class CardFormTest {
         RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInvalidCityInfo("ru");
 
         $("input[type='text']").setValue("");
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue(requestCardInfo.getFormattedMeetDate());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(DataGenerator.Date.getFormattedDate(3));
         $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
@@ -95,11 +90,11 @@ class CardFormTest {
 
     @Test
     void shouldNotCardDeliveryInvalidDate() {
-        RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInvalidDateInfo("ru");
+        RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInfo("ru");
 
         $("input[type='text']").setValue(requestCardInfo.getCity());
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue(requestCardInfo.getFormattedMeetDate());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(DataGenerator.Date.getFormattedDate());
         $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
@@ -109,11 +104,11 @@ class CardFormTest {
 
     @Test
     void shouldNotCardDeliveryInvalidDateEmpty() {
-        RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInvalidDateInfo("ru");
+        RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInfo("ru");
 
         $("input[type='text']").setValue(requestCardInfo.getCity());
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue("");
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue("");
         $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
@@ -126,8 +121,8 @@ class CardFormTest {
         RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInvalidFullNameInfo("ru");
 
         $("input[type='text']").setValue(requestCardInfo.getCity());
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue(requestCardInfo.getFormattedMeetDate());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(DataGenerator.Date.getFormattedDate(3));
         $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
@@ -141,8 +136,8 @@ class CardFormTest {
         RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInvalidFullNameInfoWithSymbols("ru");
 
         $("input[type='text']").setValue(requestCardInfo.getCity());
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue(requestCardInfo.getFormattedMeetDate());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(DataGenerator.Date.getFormattedDate(3));
         $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
@@ -156,8 +151,8 @@ class CardFormTest {
         RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInvalidFullNameInfoWithSymbols("ru");
 
         $("input[type='text']").setValue(requestCardInfo.getCity());
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue(requestCardInfo.getFormattedMeetDate());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(DataGenerator.Date.getFormattedDate(3));
         $("input[name='name']").setValue("");
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
@@ -170,8 +165,8 @@ class CardFormTest {
         RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInvalidPhoneInfoWithSymbols("ru");
 
         $("input[type='text']").setValue(requestCardInfo.getCity());
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue(requestCardInfo.getFormattedMeetDate());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(DataGenerator.Date.getFormattedDate(3));
         $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").setValue("");
         $("[data-test-id=agreement]").click();
@@ -184,8 +179,8 @@ class CardFormTest {
         RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInfo("ru");
 
         $("input[type='text']").setValue(requestCardInfo.getCity());
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue(requestCardInfo.getFormattedMeetDate());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(DataGenerator.Date.getFormattedDate(3));
         $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $(withText("Запланировать")).click();
@@ -194,37 +189,38 @@ class CardFormTest {
 
     @Test
     void shouldCardDeliveryChange() {
+        RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInfo("ru");
 
-        $("input[type='text']").setValue("Москва");
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue("10.02.2021");
-        $("input[name='name']").setValue("Сюзана Зарипова");
-        $("input[name='phone']").setValue("+78954532412");
+        String date = DataGenerator.Date.getFormattedDate(4);
+
+        $("input[type='text']").setValue(requestCardInfo.getCity());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(date);
+        $("input[name='name']").setValue(requestCardInfo.getFullName());
+        $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
         $(byText("Успешно!")).waitUntil(visible, 15000);
 
-        String dataNow = $("input[type='tel']").val();
-
         $(".notification__content")
-                .shouldHave(text("Встреча успешно запланирована на " + dataNow));
+                .shouldHave(text("Встреча успешно запланирована на " + date));
+
+        String newDate = DataGenerator.Date.getFormattedDate(5);
 
         $("input[type='text']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='text']").setValue("Москва");
-        $("input[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[type='tel']").setValue("05.01.2021");
+        $("input[type='text']").setValue(requestCardInfo.getCity());
+        $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("input.input__control[type='tel']").setValue(newDate);
         $("input[name='name']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[name='name']").setValue("Сюзана Зарипова");
+        $("input[name='name']").setValue(requestCardInfo.getFullName());
         $("input[name='phone']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("input[name='phone']").setValue("+78954532412");
+        $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $(withText("Запланировать")).click();
 
         $(byText("Необходимо подтверждение")).exists();
         $(byText("У вас уже запланирована встреча на другую дату. Перепланировать?")).exists();
         $(withText("Перепланировать")).click();
 
-        String dataNowNow = $("input[type='tel']").val();
-
-        $(byText("Встреча успешно запланирована на " + dataNowNow)).exists();
+        $(byText("Встреча успешно запланирована на " + newDate)).exists();
     }
 }
