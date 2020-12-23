@@ -222,7 +222,7 @@ class CardFormTest {
         $(byText("У вас уже запланирована встреча на другую дату. Перепланировать?")).shouldBe(visible);;
         $(withText("Перепланировать")).click();
 
-        $(byText("Встреча успешно запланирована на " + newDate)).shouldBe(visible);
+        $(byText("Встреча успешно запланирована на " + newDate)).exists();
     }
 
 //    Баги
