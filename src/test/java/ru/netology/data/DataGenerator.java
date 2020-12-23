@@ -1,7 +1,6 @@
-package Data;
+package ru.netology.data;
 
 import com.github.javafaker.Faker;
-import ru.netology.RequestCardInfo;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -112,6 +111,16 @@ public class DataGenerator {
                     DataGenerator.City.getRandomValidCity(),
                     faker.name().firstName() + " " + faker.name().lastName(),
                     faker.regexify("[!-)]{10}")
+            );
+        }
+
+        public static RequestCardInfo generateInvalidPhoneWithOne(String locale) {
+            Faker faker = new Faker(new Locale(locale));
+
+            return new RequestCardInfo(
+                    DataGenerator.City.getRandomValidCity(),
+                    faker.name().firstName() + " " + faker.name().lastName(),
+                    faker.number().digit()
             );
         }
     }

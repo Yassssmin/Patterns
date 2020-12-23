@@ -1,9 +1,10 @@
-package ru.netology;
+package ru.netology.test;
 
-import Data.DataGenerator;
+import ru.netology.data.DataGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
+import ru.netology.data.RequestCardInfo;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
@@ -71,7 +72,7 @@ class CardFormTest {
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
-        $(byText("Доставка в выбранный город недоступна")).shouldHave(text("Доставка в выбранный город недоступна"));
+        $(byText("Доставка в выбранный город недоступна")).shouldBe(visible);
     }
 
     @Test
@@ -85,7 +86,7 @@ class CardFormTest {
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
-        $(byText("Поле обязательно для заполнения")).shouldHave(text("Поле обязательно для заполнения"));
+        $(byText("Поле обязательно для заполнения")).shouldBe(visible);
     }
 
     @Test
@@ -99,7 +100,7 @@ class CardFormTest {
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
-        $(byText("Заказ на выбранную дату невозможен")).shouldHave(text("Заказ на выбранную дату невозможен"));
+        $(byText("Заказ на выбранную дату невозможен")).shouldBe(visible);
     }
 
     @Test
@@ -113,7 +114,7 @@ class CardFormTest {
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
-        $(byText("Неверно введена дата")).shouldHave(text("Неверно введена дата"));
+        $(byText("Неверно введена дата")).shouldBe(visible);
     }
 
     @Test
@@ -128,7 +129,7 @@ class CardFormTest {
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
         $(byText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."))
-                .shouldHave(text("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+                .shouldBe(visible);
     }
 
     @Test
@@ -143,7 +144,7 @@ class CardFormTest {
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
         $(byText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."))
-                .shouldHave(text("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+        .shouldBe(visible);
     }
 
     @Test
@@ -157,7 +158,7 @@ class CardFormTest {
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
-        $(byText("Поле обязательно для заполнения")).shouldHave(text("Поле обязательно для заполнения"));
+        $(byText("Поле обязательно для заполнения")).shouldBe(visible);
     }
 
     @Test
@@ -171,7 +172,7 @@ class CardFormTest {
         $("input[name='phone']").setValue("");
         $("[data-test-id=agreement]").click();
         $(withText("Запланировать")).click();
-        $(byText("Поле обязательно для заполнения")).shouldHave(text("Поле обязательно для заполнения"));
+        $(byText("Поле обязательно для заполнения")).shouldBe(visible);
     }
 
     @Test
@@ -217,10 +218,31 @@ class CardFormTest {
         $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
         $(withText("Запланировать")).click();
 
-        $(byText("Необходимо подтверждение")).exists();
-        $(byText("У вас уже запланирована встреча на другую дату. Перепланировать?")).exists();
+        $(byText("Необходимо подтверждение")).shouldBe(visible);
+        $(byText("У вас уже запланирована встреча на другую дату. Перепланировать?")).shouldBe(visible);;
         $(withText("Перепланировать")).click();
 
-        $(byText("Встреча успешно запланирована на " + newDate)).exists();
+        $(byText("Встреча успешно запланирована на " + newDate)).shouldBe(visible);
     }
+
+//    Баги
+    /* Тут должна выводиться ошибка, что номер телефона должен состоять их 11 цифр начиная с +7*/
+@Test
+void shouldCardDeliveryPhoneInvalidMin() {
+    RequestCardInfo requestCardInfo = DataGenerator.CardRequest.generateInvalidPhoneWithOne("ru");
+
+    String date = DataGenerator.Date.getFormattedDate(3);
+
+    $("input[type='text']").setValue(requestCardInfo.getCity());
+    $("input.input__control[type='tel']").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+    $("input.input__control[type='tel']").setValue(date);
+    $("input[name='name']").setValue(requestCardInfo.getFullName());
+    $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
+    $("[data-test-id=agreement]").click();
+    $(withText("Запланировать")).click();
+    $(byText("Успешно!")).waitUntil(visible, 15000);
+
+    $(".notification__content")
+            .shouldHave(text("Встреча успешно запланирована на " + date));
+}
 }
