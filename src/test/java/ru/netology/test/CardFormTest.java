@@ -240,9 +240,7 @@ void shouldCardDeliveryPhoneInvalidMin() {
     $("input[name='phone']").setValue(requestCardInfo.getPhoneNumber());
     $("[data-test-id=agreement]").click();
     $(withText("Запланировать")).click();
-    $(byText("Успешно!")).waitUntil(visible, 15000);
+    $(byText("Номер телефона должен состоять из 11 цирфр, начиная с +7")).shouldBe(visible);
 
-    $(".notification__content")
-            .shouldHave(text("Встреча успешно запланирована на " + date));
 }
 }
